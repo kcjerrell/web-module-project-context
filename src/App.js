@@ -15,15 +15,24 @@ import CartContext from './contexts/CartContext';
 function App() {
 	const [products] = useState(data);
 	const [cart, setCart] = useState([]);
+	const [transactIds, setTransactIds] = useState(0);
 
 	const addItem = item => {
+		// each item in the cart needs a unique id, so they can be deleted independently
+		const transId = transactIds + 1;
+		setTransactIds(transId);
+
 		// add the given item to the cart
-		setCart([...cart, item]);
+		setCart([...cart, {...item, transactId: transId}]);
 	};
+
+	const removeItem = transactId => {
+		setCart(cart.filter(item => item.transactId !== transactId));
+	}
 
 	return (
 		<ProductContext.Provider value={{ products, addItem }}>
-			<CartContext.Provider value={cart}>
+			<CartContext.Provider value={{cart, removeItem}}>
 
 
 				<div className="App">
